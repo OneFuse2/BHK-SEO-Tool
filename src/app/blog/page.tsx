@@ -14,7 +14,7 @@ export default function BlogPage() {
       <section className="w-full py-20 md:py-28 bg-primary/5">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
-            SEO AI Pro Blog
+            bhktools.com Blog
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
             Insights, trends, and strategies on SEO, content marketing, and AI.

@@ -79,7 +79,7 @@ export default function TermsPage() {
             <h2 className="mt-6 mb-4 font-bold text-xl">Contact Us</h2>
             <p>
               If you have any questions about these Terms and Conditions, You can
-              contact us by email at support@seo-ai-pro.com.
+              contact us by email at support@bhktools.com.
             </p>
           </div>
         </div>

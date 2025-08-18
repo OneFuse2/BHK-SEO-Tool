@@ -6,7 +6,7 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'SEO AI Pro - AI-Powered SEO Analysis',
+  title: 'bhktools.com - AI-Powered SEO Analysis',
   description: 'Elevate Your SEO with AI-Powered Insights and Optimization.',
 };
 
