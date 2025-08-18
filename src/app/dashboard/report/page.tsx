@@ -9,6 +9,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { suggestKeywords, AIKeywordSuggestionsOutput } from '@/ai/flows/ai-keyword-suggestions';
 import { analyzeSeoAndPerformance, AISeoReportOutput } from '@/ai/flows/ai-seo-report';
 import ReportDisplay from './report-display';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 function ReportSkeleton() {
     return (
@@ -92,10 +94,20 @@ export default function ReportPage({ searchParams }: { searchParams: { url?: str
   return (
     <div className="bg-primary/5 min-h-full">
         <div className="container mx-auto px-4 py-12">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">SEO Report For</h1>
-            <Link href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
-                {url}
-            </Link>
+            <div className="flex justify-between items-center mb-2">
+                <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground">SEO Report For</h1>
+                    <Link href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
+                        {url}
+                    </Link>
+                </div>
+                <Button asChild variant="outline">
+                    <Link href="/dashboard">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Analyze Another
+                    </Link>
+                </Button>
+            </div>
 
             <div className="mt-8">
                  <Suspense fallback={<ReportSkeleton />}>
