@@ -24,9 +24,9 @@ const posts: BlogPost[] = [
     tags: ['SEO', 'Trends', 'AI'],
     content: (
       <div>
-        <p>As we look towards 2025, the SEO landscape is poised for another significant transformation. Artificial Intelligence is no longer a futuristic concept but a core component of how search engines operate and how marketers should approach optimization. Here are the key trends to keep on your radar.</p>
+        <p>{`As we look towards 2025, the SEO landscape is poised for another significant transformation. Artificial Intelligence is no longer a futuristic concept but a core component of how search engines operate and how marketers should approach optimization. Here are the key trends to keep on your radar.`}</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">1. Generative AI and Search Generative Experience (SGE)</h3>
-        <p>Google's SGE is changing the SERP as we know it. Instead of a list of blue links, users are getting AI-generated summaries and direct answers. This means "position zero" is more important than ever. To optimize for SGE, focus on creating comprehensive, expert-level content that directly answers user questions. Structured data and clear, concise language are crucial.</p>
+        <p>{`Google's SGE is changing the SERP as we know it. Instead of a list of blue links, users are getting AI-generated summaries and direct answers. This means "position zero" is more important than ever. To optimize for SGE, focus on creating comprehensive, expert-level content that directly answers user questions. Structured data and clear, concise language are crucial.`}</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">2. The Rise of Visual and Voice Search</h3>
         <p>Text-based queries are no longer the only game in town. More users are turning to voice assistants and visual search tools like Google Lens. This requires a shift in strategy. For visual search, high-quality, well-labeled images with descriptive alt text are essential. For voice search, focus on long-tail keywords and conversational phrases that mimic how people naturally speak.</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">3. E-E-A-T is Non-Negotiable</h3>
