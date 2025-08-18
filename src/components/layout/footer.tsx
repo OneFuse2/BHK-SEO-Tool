@@ -51,7 +51,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} bhktools.com. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} BHK SEO Tools. All rights reserved.</p>
         </div>
       </div>
     </footer>

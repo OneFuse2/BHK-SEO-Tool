@@ -40,7 +40,7 @@ export default function FeaturesPage() {
             Powerful Features to Supercharge Your SEO
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
-            bhktools.com is more than just a keyword tool. It's a complete suite for website optimization.
+            BHK SEO Tools is more than just a keyword tool. It's a complete suite for website optimization.
           </p>
         </div>
       </section>

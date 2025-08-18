@@ -36,7 +36,7 @@ export default function Home() {
       name: 'Sarah J., Marketing Director',
       image: 'https://placehold.co/100x100.png',
       dataAiHint: 'woman portrait',
-      quote: 'bhktools.com has been a game-changer for our content strategy. The keyword suggestions are incredibly accurate and have saved us countless hours of manual research.',
+      quote: 'BHK SEO Tools has been a game-changer for our content strategy. The keyword suggestions are incredibly accurate and have saved us countless hours of manual research.',
     },
     {
       name: 'Mike R., Startup Founder',
@@ -54,7 +54,7 @@ export default function Home() {
             Elevate Your SEO with AI-Powered Insights
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
-            Stop guessing. Start ranking. bhktools.com analyzes your website to give you actionable, data-driven advice to climb the search rankings.
+            Stop guessing. Start ranking. BHK SEO Tools analyzes your website to give you actionable, data-driven advice to climb the search rankings.
           </p>
           <div className="mt-8 max-w-xl mx-auto">
             <UrlForm />
