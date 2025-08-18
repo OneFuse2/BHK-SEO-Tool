@@ -1,4 +1,4 @@
-import { सuspense } from 'react';
+import { Suspense } from 'react';
 import { getBlogPost, getBlogPosts } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { suggestKeywords, AIKeywordSuggestionsOutput } from '@/ai/flows/ai-keyword-suggestions';
+import { analyzeSeoAndPerformance, AISeoReportOutput } from '@/ai/flows/ai-seo-report';
 import ReportDisplay from './report-display';
 
 function ReportSkeleton() {
@@ -31,33 +32,41 @@ function ReportSkeleton() {
 
 async function ReportDataFetcher({ url }: { url: string }) {
     let keywordData: AIKeywordSuggestionsOutput | null = null;
+    let reportData: AISeoReportOutput | null = null;
     let error: string | null = null;
 
     try {
-        keywordData = await suggestKeywords({ url });
+        // Run requests in parallel
+        const [keywordResult, reportResult] = await Promise.allSettled([
+            suggestKeywords({ url }),
+            analyzeSeoAndPerformance({ url })
+        ]);
+
+        if (keywordResult.status === 'fulfilled') {
+            keywordData = keywordResult.value;
+        } else {
+            console.error("Keyword suggestion failed:", keywordResult.reason);
+        }
+
+        if (reportResult.status === 'fulfilled') {
+            reportData = reportResult.value;
+        } else {
+            console.error("SEO & Perf analysis failed:", reportResult.reason);
+        }
+
+        if (keywordResult.status === 'rejected' && reportResult.status === 'rejected') {
+             throw new Error("All AI analysis tasks failed.");
+        }
+
     } catch (e) {
         console.error(e);
-        error = "Failed to fetch keyword suggestions. The AI model may be unavailable or the URL may be inaccessible."
+        error = "Failed to fetch analysis data. The AI model may be unavailable or the URL may be inaccessible."
     }
-
-    // Mock other data
-    const mockPerformanceData = {
-        score: 88,
-        metrics: [
-            { name: "First Contentful Paint", value: "1.2s" },
-            { name: "Speed Index", value: "2.1s" },
-            { name: "Largest Contentful Paint", value: "1.8s" },
-            { name: "Time to Interactive", value: "2.5s" },
-        ]
-    };
-
-    const mockSeoScore = Math.floor(Math.random() * (95 - 70 + 1) + 70); // Random score between 70-95
 
     return <ReportDisplay 
         url={url} 
         keywordData={keywordData} 
-        performanceData={mockPerformanceData}
-        seoScore={mockSeoScore}
+        reportData={reportData}
         error={error}
     />;
 }

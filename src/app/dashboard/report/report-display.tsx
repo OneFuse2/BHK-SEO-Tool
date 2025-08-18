@@ -1,10 +1,11 @@
 'use client';
 
 import { AIKeywordSuggestionsOutput } from '@/ai/flows/ai-keyword-suggestions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AISeoReportOutput } from '@/ai/flows/ai-seo-report';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { BarChart, BrainCircuit, CheckCircle, Gauge, ListChecks, ShieldCheck, Siren } from 'lucide-react';
+import { BarChart, BrainCircuit, CheckCircle, Gauge, Lightbulb, ListChecks, ShieldCheck, Siren } from 'lucide-react';
 import SeoScoreGauge from '@/components/seo-score-gauge';
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -13,12 +14,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 interface ReportDisplayProps {
     url: string;
     keywordData: AIKeywordSuggestionsOutput | null;
-    performanceData: any;
-    seoScore: number;
+    reportData: AISeoReportOutput | null;
     error: string | null;
 }
 
-export default function ReportDisplay({ url, keywordData, performanceData, seoScore, error }: ReportDisplayProps) {
+export default function ReportDisplay({ url, keywordData, reportData, error }: ReportDisplayProps) {
 
   if (error) {
     return (
@@ -32,14 +32,32 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
     )
   }
 
-  const sortedKeywords = keywordData?.keywords.sort((a, b) => b.relevanceScore - a.relevanceScore).slice(0, 10) || [];
+  if (!reportData) {
+      return (
+        <Alert variant="destructive">
+            <Siren className="h-4 w-4" />
+            <AlertTitle>Incomplete Analysis</AlertTitle>
+            <AlertDescription>
+            Could not retrieve the main SEO and Performance report. The AI model may be unavailable or the URL may be inaccessible.
+            </AlertDescription>
+        </Alert>
+      )
+  }
+
+  const sortedKeywords = keywordData?.keywords?.sort((a, b) => b.relevanceScore - a.relevanceScore).slice(0, 10) || [];
+  const seoScore = reportData.seoScore || 0;
+  const performanceScore = reportData.performance.score || 0;
 
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 md:w-auto md:inline-flex">
+      <TabsList className="grid w-full grid-cols-4 md:w-auto md:inline-flex">
         <TabsTrigger value="overview">
           <Gauge className="mr-2 h-4 w-4" />
           Overview
+        </TabsTrigger>
+        <TabsTrigger value="on-page-seo">
+            <CheckCircle className="mr-2 h-4 w-4" />
+            On-Page SEO
         </TabsTrigger>
         <TabsTrigger value="keywords">
           <BrainCircuit className="mr-2 h-4 w-4" />
@@ -69,8 +87,8 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
                         <CheckCircle className="h-4 w-4 text-accent" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">Excellent</div>
-                        <p className="text-xs text-muted-foreground">Meta tags and content structure are well-optimized.</p>
+                        <div className="text-2xl font-bold">{seoScore > 85 ? "Excellent" : "Good"}</div>
+                        <p className="text-xs text-muted-foreground">Meta tags and content structure are analyzed.</p>
                     </CardContent>
                 </Card>
                  <Card className="shadow-md">
@@ -79,7 +97,7 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
                         <BrainCircuit className="h-4 w-4 text-accent" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{keywordData?.keywords.length || 0} Suggestions</div>
+                        <div className="text-2xl font-bold">{keywordData?.keywords?.length || 0} Suggestions</div>
                         <p className="text-xs text-muted-foreground">AI-generated keywords found.</p>
                     </CardContent>
                 </Card>
@@ -89,8 +107,8 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
                         <BarChart className="h-4 w-4 text-accent" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{performanceData.score}/100</div>
-                        <p className="text-xs text-muted-foreground">Page speed is good.</p>
+                        <div className="text-2xl font-bold">{performanceScore}/100</div>
+                        <p className="text-xs text-muted-foreground">AI-based page speed analysis.</p>
                     </CardContent>
                 </Card>
                  <Card className="shadow-md">
@@ -106,15 +124,50 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
             </div>
         </div>
       </TabsContent>
+        <TabsContent value="on-page-seo" className="mt-6">
+            <Card className="shadow-lg">
+                <CardHeader>
+                    <CardTitle>AI On-Page SEO Analysis</CardTitle>
+                    <CardDescription>Recommendations to improve your on-page SEO based on your content.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div>
+                        <h3 className="font-semibold text-lg">Title Tag</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Current: <span className="font-mono bg-muted p-1 rounded text-xs">{reportData.onPageSeo.title}</span></p>
+                        <Card className="mt-2 bg-primary/5">
+                            <CardHeader className="flex flex-row items-start gap-3 space-y-0 p-4">
+                                <Lightbulb className="h-5 w-5 text-accent shrink-0 mt-1" />
+                                <div>
+                                    <h4 className="font-semibold">AI Suggestion</h4>
+                                    <p className="text-sm text-muted-foreground">{reportData.onPageSeo.titleSuggestion}</p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    </div>
+                     <div>
+                        <h3 className="font-semibold text-lg">Meta Description</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Current: <span className="font-mono bg-muted p-1 rounded text-xs">{reportData.onPageSeo.metaDescription}</span></p>
+                         <Card className="mt-2 bg-primary/5">
+                            <CardHeader className="flex flex-row items-start gap-3 space-y-0 p-4">
+                                <Lightbulb className="h-5 w-5 text-accent shrink-0 mt-1" />
+                                <div>
+                                    <h4 className="font-semibold">AI Suggestion</h4>
+                                    <p className="text-sm text-muted-foreground">{reportData.onPageSeo.metaDescriptionSuggestion}</p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    </div>
+                </CardContent>
+            </Card>
+        </TabsContent>
       <TabsContent value="keywords" className="mt-6">
          <Card className="shadow-lg">
             <CardHeader>
                 <CardTitle>AI Keyword Suggestions</CardTitle>
+                <CardDescription>Top keywords our AI recommends focusing on based on your content.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
-                     <h3 className="font-semibold mb-2">Top Keywords by Relevance</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Here are the top keywords our AI recommends focusing on based on your content.</p>
                     <div className="rounded-md border">
                         <Table>
                             <TableHeader>
@@ -124,12 +177,16 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {sortedKeywords.map(item => (
+                                {sortedKeywords.length > 0 ? sortedKeywords.map(item => (
                                     <TableRow key={item.keyword}>
                                         <TableCell className="font-medium">{item.keyword}</TableCell>
                                         <TableCell className="text-right">{item.relevanceScore}</TableCell>
                                     </TableRow>
-                                ))}
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={2} className="text-center text-muted-foreground">No keyword data available.</TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </div>
@@ -154,24 +211,27 @@ export default function ReportDisplay({ url, keywordData, performanceData, seoSc
       <TabsContent value="performance" className="mt-6">
          <Card className="shadow-lg">
             <CardHeader>
-                <CardTitle>Page Speed Insights</CardTitle>
+                <CardTitle>AI Performance Analysis</CardTitle>
+                <CardDescription>High-impact recommendations to improve your site's speed.</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    {performanceData.metrics.map((metric: any) => (
-                        <div key={metric.name} className="bg-primary/10 p-4 rounded-lg">
-                            <p className="text-sm text-muted-foreground">{metric.name}</p>
-                            <p className="text-2xl font-bold">{metric.value}</p>
-                        </div>
-                    ))}
-                </div>
-                 <div className="mt-8">
-                    <h3 className="font-semibold mb-2">Recommendations</h3>
-                     <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li className="flex items-start"><CheckCircle className="h-4 w-4 text-accent mr-2 mt-0.5 shrink-0" /><span>Properly size images to save cellular data.</span></li>
-                        <li className="flex items-start"><CheckCircle className="h-4 w-4 text-accent mr-2 mt-0.5 shrink-0" /><span>Serve static assets with an efficient cache policy.</span></li>
-                        <li className="flex items-start"><CheckCircle className="h-4 w-4 text-accent mr-2 mt-0.5 shrink-0" /><span>Minify CSS and JavaScript files to reduce file sizes.</span></li>
-                     </ul>
+                 <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <div className="text-5xl font-bold text-primary">{performanceScore}</div>
+                        <div className="text-lg font-semibold">/ 100</div>
+                        <p className="text-muted-foreground">Overall Performance Score</p>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-lg">Recommendations</h3>
+                        <ul className="space-y-3 mt-2">
+                            {reportData.performance.recommendations.map((rec, i) => (
+                                <li key={i} className="flex items-start gap-3">
+                                    <CheckCircle className="h-5 w-5 text-accent mt-0.5 shrink-0" />
+                                    <span className="text-muted-foreground">{rec}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </CardContent>
          </Card>
