@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { BrainCircuit, Search, BarChart, Zap } from 'lucide-react';
+import { BrainCircuit, Search, BarChart, Zap, GitCompareArrows } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import UrlForm from './dashboard/url-form';
@@ -25,9 +25,9 @@ export default function Home() {
       description: 'Analyze your page speed and get recommendations to make your site lightning-fast.',
     },
     {
-      icon: <Search className="h-10 w-10 text-accent" />,
-      title: 'Full Website Audits',
-      description: 'Run a complete check on meta tags, security, and more to uncover every optimization opportunity.',
+      icon: <GitCompareArrows className="h-10 w-10 text-accent" />,
+      title: 'Competitor Comparison',
+      description: 'Compare your SEO and performance against a competitor side-by-side.',
     },
   ];
 
@@ -91,13 +91,13 @@ export default function Home() {
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div>
              <h2 className="text-3xl md:text-4xl font-bold">
-              Save Hours on Manual Audits
+              Analyze Competitors Side-by-Side
             </h2>
             <p className="mt-4 text-muted-foreground text-lg">
-              Our AI does the heavy lifting, analyzing your URL's content, structure, and performance in seconds. Get the insights you need to make impactful changes without the tedious manual work.
+              Our new comparison tool lets you analyze two URLs simultaneously. See how your SEO, performance, and keywords stack up against the competition to find your strategic edge.
             </p>
             <Button asChild size="lg" className="mt-6">
-              <Link href="/features">Explore All Features</Link>
+              <Link href="/dashboard/compare">Compare Websites</Link>
             </Button>
           </div>
           <div>
@@ -106,7 +106,7 @@ export default function Home() {
               alt="Dashboard Mockup"
               width={600}
               height={400}
-              data-ai-hint="dashboard analytics"
+              data-ai-hint="side-by-side chart"
               className="rounded-lg shadow-2xl"
             />
           </div>
