@@ -9,7 +9,7 @@ const features = [
     title: "AI-Powered Keyword Suggestions",
     description: "Our advanced AI analyzes your content and competitors to find high-impact keywords you might be missing. We provide relevance scores and competition data to help you prioritize the best opportunities for your business.",
     benefits: ["Discover untapped keywords", "Understand keyword relevance instantly", "Save hours on manual research"],
-    imageUrl: "https://placehold.co/500x300.png",
+    imageUrl: "https://picsum.photos/seed/f1/500/300",
     dataAiHint: "graphs charts",
     align: "left"
   },
@@ -17,7 +17,7 @@ const features = [
     title: "Comprehensive SEO Reports",
     description: "Get a holistic view of your website's SEO health. Our reports cover over 50 data points, from on-page factors like meta tags and content quality to off-page metrics and technical performance. Visual charts make complex data easy to digest.",
     benefits: ["Get a single SEO score", "Actionable, prioritized recommendations", "Track progress over time"],
-    imageUrl: "https://placehold.co/500x300.png",
+    imageUrl: "https://picsum.photos/seed/f2/500/300",
     dataAiHint: "analytics dashboard",
     align: "right"
   },
@@ -25,7 +25,7 @@ const features = [
     title: "Full Website Test Suite",
     description: "Go beyond traditional SEO. We test your site for performance, mobile-friendliness, security vulnerabilities, and more. A fast and secure site is crucial for ranking, and we give you the tools to ensure you're up to par.",
     benefits: ["Identify performance bottlenecks", "Ensure your site is secure", "Optimize for all devices"],
-    imageUrl: "https://placehold.co/500x300.png",
+    imageUrl: "https://picsum.photos/seed/f3/500/300",
     dataAiHint: "server code",
     align: "left"
   }
