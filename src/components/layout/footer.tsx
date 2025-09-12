@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Logo from '@/components/logo';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ export default function Footer() {
   ];
 
   const footerLinks = [
-    { title: 'Product', links: [{ href: '/features', label: 'Features' }, { href: '/pricing', label: 'Pricing' }, { href: '/dashboard', label: 'Dashboard' }, { href: '/dashboard/compare', label: 'Compare' }] },
+    { title: 'Product', links: [{ href: '/features', label: 'Features' }, { href: '/pricing', label: 'Pricing' }, { href: '/dashboard', label: 'Dashboard' }, { href: '/dashboard/compare', label: 'Compare' }, { href: '/dashboard/favicon-checker', label: 'Favicon Checker' }] },
     { title: 'Company', links: [{ href: '/blog', label: 'Blog' }, { href: '#', label: 'About Us' }, { href: '#', label: 'Contact' }] },
     { title: 'Legal', links: [{ href: '/terms', label: 'Terms of Service' }, { href: '#', label: 'Privacy Policy' }] },
   ];

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -13,6 +14,7 @@ const navLinks = [
   { href: '/pricing', label: 'Pricing' },
   { href: '/blog', label: 'Blog' },
   { href: '/dashboard/compare', label: 'Compare' },
+  { href: '/dashboard/favicon-checker', label: 'Favicon Checker' },
 ];
 
 export default function Header() {
