@@ -30,43 +30,50 @@ function FaviconSkeleton() {
 
 // A simplified favicon fetcher. A real one would need to parse the HTML head.
 // For now, we'll try the default /favicon.ico path.
-async function FaviconDataFetcher({ url }: { url: string }) {
+async function FaviconDataFetcher({ url, imageData }: { url?: string, imageData?: string }) {
     let faviconUrl = '';
     let error: string | null = null;
     
-    try {
-        const urlObject = new URL(url);
-        // This is a simplified approach. A robust solution would parse the HTML
-        // to find <link rel="icon"> tags.
-        const potentialFaviconUrl = `${urlObject.origin}/favicon.ico`;
+    if (imageData) {
+        faviconUrl = imageData;
+    } else if (url) {
+        try {
+            const urlObject = new URL(url);
+            // This is a simplified approach. A robust solution would parse the HTML
+            // to find <link rel="icon"> tags.
+            const potentialFaviconUrl = `${urlObject.origin}/favicon.ico`;
 
-        // Check if the favicon.ico exists
-        const response = await fetch(potentialFaviconUrl, { method: 'HEAD', redirect: 'follow' });
-        
-        if (response.ok) {
-            faviconUrl = potentialFaviconUrl;
-        } else {
-            // As a fallback, try to use Google's favicon service
-            faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain_url=${urlObject.hostname}`;
+            // Check if the favicon.ico exists
+            const response = await fetch(potentialFaviconUrl, { method: 'HEAD', redirect: 'follow' });
+            
+            if (response.ok) {
+                faviconUrl = potentialFaviconUrl;
+            } else {
+                // As a fallback, try to use Google's favicon service
+                faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain_url=${urlObject.hostname}`;
+            }
+        } catch(e) {
+            console.error(e);
+            error = "Could not construct a valid URL or fetch the favicon."
         }
-    } catch(e) {
-        console.error(e);
-        error = "Could not construct a valid URL or fetch the favicon."
+    } else {
+         error = "No URL or image data provided."
     }
 
-    return <FaviconDisplay siteUrl={url} faviconUrl={faviconUrl} error={error} />;
+    return <FaviconDisplay siteUrl={url || "local-preview"} faviconUrl={faviconUrl} error={error} />;
 }
 
 
-export default function FaviconReportPage({ searchParams }: { searchParams: { url?: string } }) {
-  const url = searchParams?.url;
+export default function FaviconReportPage({ searchParams }: { searchParams: { url?: string, imageData?: string, siteUrl?: string } }) {
+  const { url, imageData, siteUrl } = searchParams;
+  const displayUrl = url || siteUrl || "Uploaded Image";
 
-  if (!url) {
+  if (!url && !imageData) {
     return (
         <div className="container mx-auto px-4 py-16">
             <div className="text-center">
-                <h1 className="text-2xl font-bold">Invalid URL</h1>
-                <p className="text-muted-foreground mt-2">Please provide a URL to check.</p>
+                <h1 className="text-2xl font-bold">Invalid Input</h1>
+                <p className="text-muted-foreground mt-2">Please provide a URL or upload an image to check.</p>
                 <Link href="/dashboard/favicon-checker" className="mt-4 inline-block text-primary hover:underline">
                     Go back to Checker
                 </Link>
@@ -81,9 +88,13 @@ export default function FaviconReportPage({ searchParams }: { searchParams: { ur
             <div className="flex justify-between items-center mb-8">
                  <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-foreground">Favicon Preview For</h1>
-                    <Link href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
-                        {url}
-                    </Link>
+                    {displayUrl.startsWith('http') ? (
+                         <Link href={displayUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
+                            {displayUrl}
+                        </Link>
+                    ) : (
+                        <p className="text-primary break-all">{displayUrl}</p>
+                    )}
                 </div>
                 <Button asChild variant="outline">
                     <Link href="/dashboard/favicon-checker">
@@ -94,7 +105,7 @@ export default function FaviconReportPage({ searchParams }: { searchParams: { ur
             </div>
 
             <Suspense fallback={<FaviconSkeleton />}>
-                <FaviconDataFetcher url={url} />
+                <FaviconDataFetcher url={url} imageData={imageData} />
             </Suspense>
         </div>
     </div>

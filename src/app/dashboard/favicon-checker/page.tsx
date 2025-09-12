@@ -1,20 +1,21 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUp, Link as LinkIcon, Eye } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function FaviconCheckerPage() {
   const [url, setUrl] = useState('');
   const router = useRouter();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitUrl = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!url || !url.trim()) {
       toast({
@@ -39,6 +40,30 @@ export default function FaviconCheckerPage() {
     router.push(`/dashboard/favicon-checker/report?url=${encodeURIComponent(url)}`);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+          toast({
+              title: 'File too large',
+              description: 'Please upload an image smaller than 2MB.',
+              variant: 'destructive'
+          });
+          return;
+      }
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        const dataUrl = loadEvent.target?.result as string;
+        router.push(`/dashboard/favicon-checker/report?imageData=${encodeURIComponent(dataUrl)}&siteUrl=local-preview`);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  }
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="max-w-3xl mx-auto text-center">
@@ -52,7 +77,7 @@ export default function FaviconCheckerPage() {
         <div className="mt-8">
             <Card>
                 <CardContent className="p-6">
-                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+                    <form onSubmit={handleSubmitUrl} className="flex flex-col sm:flex-row gap-2">
                         <div className="relative flex-grow">
                              <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                             <Input
@@ -61,7 +86,6 @@ export default function FaviconCheckerPage() {
                                 onChange={(e) => setUrl(e.target.value)}
                                 placeholder="https://your-website.com"
                                 className="h-12 text-base pl-10"
-                                required
                             />
                         </div>
                         <Button type="submit" size="lg" className="h-12">
@@ -79,9 +103,16 @@ export default function FaviconCheckerPage() {
                             </span>
                         </div>
                     </div>
-                    <Button variant="outline" size="lg" className="h-12 w-full mt-4" disabled>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept="image/png, image/jpeg, image/gif, image/x-icon, image/svg+xml"
+                    />
+                    <Button variant="outline" size="lg" className="h-12 w-full mt-4" onClick={handleUploadClick}>
                         <ImageUp className="mr-2 h-5 w-5" />
-                        Upload an Image (Coming Soon)
+                        Upload an Image
                     </Button>
                 </CardContent>
             </Card>
