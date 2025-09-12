@@ -15,6 +15,8 @@ const navLinks = [
   { href: '/blog', label: 'Blog' },
   { href: '/dashboard/compare', label: 'Compare' },
   { href: '/dashboard/favicon-checker', label: 'Favicon Checker' },
+  { href: '/dashboard/dns-checker', label: 'DNS Checker' },
+  { href: '/dashboard/ip-checker', label: 'IP Checker' },
 ];
 
 export default function Header() {
