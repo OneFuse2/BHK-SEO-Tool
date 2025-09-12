@@ -10,9 +10,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/features', label: 'Features' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/blog', label: 'Blog' },
   { href: '/dashboard/compare', label: 'Compare' },
   { href: '/dashboard/favicon-checker', label: 'Favicon Checker' },
   { href: '/dashboard/dns-checker', label: 'DNS Checker' },
