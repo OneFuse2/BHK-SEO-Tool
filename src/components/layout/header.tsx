@@ -14,6 +14,7 @@ const navLinks = [
   { href: '/dashboard/compare', label: 'Compare' },
   { href: '/dashboard/favicon-checker', label: 'Favicon Checker' },
   { href: '/dashboard/dns-checker', label: 'DNS Checker' },
+  { href: '/dashboard/speed-test', label: 'Speed Test' },
   { href: '/dashboard/ip-checker', label: 'IP Checker' },
 ];
 
