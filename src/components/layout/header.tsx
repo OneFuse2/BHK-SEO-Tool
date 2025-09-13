@@ -48,7 +48,7 @@ export default function Header() {
 
         <div className="hidden md:flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard">Log In</Link>
+            <Link href="/login">Log In</Link>
           </Button>
           <Button asChild>
             <Link href="/dashboard">Get Started</Link>
@@ -76,7 +76,7 @@ export default function Header() {
                 ))}
                 <div className="mt-6 flex flex-col gap-4">
                     <Button variant="ghost" asChild>
-                        <Link href="/dashboard">Log In</Link>
+                        <Link href="/login">Log In</Link>
                     </Button>
                     <Button asChild>
                         <Link href="/dashboard">Get Started</Link>
