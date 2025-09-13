@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,13 +35,13 @@ export default function Home() {
   const testimonials = [
     {
       name: 'Sarah J., Marketing Director',
-      image: 'https://placehold.co/100x100.png',
+      image: 'https://picsum.photos/seed/t1/100/100',
       dataAiHint: 'woman portrait',
       quote: 'BHK SEO Tools has been a game-changer for our content strategy. The keyword suggestions are incredibly accurate and have saved us countless hours of manual research.',
     },
     {
       name: 'Mike R., Startup Founder',
-      image: 'https://placehold.co/100x100.png',
+      image: 'https://picsum.photos/seed/t2/100/100',
       dataAiHint: 'man portrait',
       quote: "As a small team, we need to be efficient. This tool gives us the power of an entire SEO agency, helping us compete with much larger companies.",
     },
@@ -102,7 +103,7 @@ export default function Home() {
           </div>
           <div>
             <Image 
-              src="https://placehold.co/600x400.png"
+              src="https://picsum.photos/seed/compare/600/400"
               alt="Dashboard Mockup"
               width={600}
               height={400}
