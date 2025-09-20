@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const Logo: React.FC = () => {
@@ -18,7 +19,7 @@ const Logo: React.FC = () => {
         <path d="m12 14 4-4" />
         <path d="M3.34 19a10 10 0 1 1 17.32 0" />
       </svg>
-      <span className="font-bold text-xl text-foreground">
+      <span className="font-bold text-xl text-foreground whitespace-nowrap">
         BHK SEO Tools
       </span>
     </div>
