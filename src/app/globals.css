@@ -8,7 +8,7 @@ body {
 
 @layer base {
   :root {
-    --background: 0 70% 97%;
+    --background: 34 88% 97%;
     --foreground: 0 10% 25%;
     --card: 0 70% 100%;
     --card-foreground: 0 10% 25%;
@@ -35,7 +35,7 @@ body {
     --radius: 0.5rem;
   }
   .dark {
-    --background: 350 30% 10%;
+    --background: 342 81% 10%;
     --foreground: 350 5% 95%;
     --card: 350 30% 10%;
     --card-foreground: 350 5% 95%;
@@ -68,5 +68,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(90deg, #f4741f, #ff1a5e);
   }
 }
