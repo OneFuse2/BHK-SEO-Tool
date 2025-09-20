@@ -68,6 +68,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(90deg, #f4741f, #ff1a5e);
+    background: linear-gradient(90deg, #ff9a57, #ff8fb0);
   }
 }
