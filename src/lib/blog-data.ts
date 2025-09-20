@@ -20,7 +20,7 @@ const posts: BlogPost[] = [
     excerpt: 'The world of SEO is constantly evolving. Stay ahead of the curve by learning about the most important trends that will shape search engine optimization in the coming year, from AI-driven search to visual discovery.',
     date: 'October 26, 2024',
     author: 'Jane Doe, SEO Strategist',
-    image: 'https://placehold.co/1200x600.png',
+    image: 'https://picsum.photos/seed/blog1/1200/600',
     dataAiHint: 'futuristic technology',
     tags: ['SEO', 'Trends', 'AI'],
     content: (
@@ -41,7 +41,7 @@ const posts: BlogPost[] = [
     excerpt: 'Artificial Intelligence is revolutionizing how we create and optimize content. Learn how AI tools can help you perform keyword research, generate ideas, analyze competitors, and personalize content at scale.',
     date: 'October 22, 2024',
     author: 'John Smith, Content Specialist',
-    image: 'https://placehold.co/1200x600.png',
+    image: 'https://picsum.photos/seed/blog2/1200/600',
     dataAiHint: 'robot brain',
     tags: ['AI', 'Content Marketing'],
     content: (
@@ -62,7 +62,7 @@ const posts: BlogPost[] = [
     excerpt: 'High-quality backlinks remain a cornerstone of SEO. Move beyond basic outreach and explore advanced strategies like digital PR, broken link building, and creating link-worthy assets to build a powerful backlink profile.',
     date: 'October 18, 2024',
     author: 'Emily White, Outreach Manager',
-    image: 'https://placehold.co/1200x600.png',
+    image: 'https://picsum.photos/seed/blog3/1200/600',
     dataAiHint: 'network connections',
     tags: ['SEO', 'Link Building'],
     content: (
