@@ -13,7 +13,7 @@ export default function Footer() {
 
   const footerLinks = [
     { title: 'Product', links: [{ href: '/features', label: 'Features' }, { href: '/pricing', label: 'Pricing' }, { href: '/dashboard', label: 'Dashboard' }, { href: '/dashboard/compare', label: 'Compare' }, { href: '/dashboard/favicon-checker', label: 'Favicon Checker' }, { href: '/dashboard/dns-checker', label: 'DNS Checker' }, { href: '/dashboard/speed-test', label: 'Speed Test' }, { href: '/dashboard/ip-checker', label: 'IP Checker' }] },
-    { title: 'Company', links: [{ href: '#', label: 'About Us' }, { href: '/blog', label: 'Blog' }, { href: '#', label: 'Contact' }] },
+    { title: 'Company', links: [{ href: '/about', label: 'About Us' }, { href: '/blog', label: 'Blog' }, { href: '#', label: 'Contact' }] },
     { title: 'Legal', links: [{ href: '/terms', label: 'Terms of Service' }, { href: '#', label: 'Privacy Policy' }] },
   ];
 
