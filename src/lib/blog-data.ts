@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export interface BlogPost {
@@ -24,9 +25,9 @@ const posts: BlogPost[] = [
     tags: ['SEO', 'Trends', 'AI'],
     content: (
       <div>
-        <p>{`As we look towards 2025, the SEO landscape is poised for another significant transformation. Artificial Intelligence is no longer a futuristic concept but a core component of how search engines operate and how marketers should approach optimization. Here are the key trends to keep on your radar.`}</p>
+        <p>{'As we look towards 2025, the SEO landscape is poised for another significant transformation. Artificial Intelligence is no longer a futuristic concept but a core component of how search engines operate and how marketers should approach optimization. Here are the key trends to keep on your radar.'}</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">1. Generative AI and Search Generative Experience (SGE)</h3>
-        <p>{`Google's SGE is changing the SERP as we know it. Instead of a list of blue links, users are getting AI-generated summaries and direct answers. This means "position zero" is more important than ever. To optimize for SGE, focus on creating comprehensive, expert-level content that directly answers user questions. Structured data and clear, concise language are crucial.`}</p>
+        <p>{'Google\'s SGE is changing the SERP as we know it. Instead of a list of blue links, users are getting AI-generated summaries and direct answers. This means "position zero" is more important than ever. To optimize for SGE, focus on creating comprehensive, expert-level content that directly answers user questions. Structured data and clear, concise language are crucial.'}</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">2. The Rise of Visual and Voice Search</h3>
         <p>Text-based queries are no longer the only game in town. More users are turning to voice assistants and visual search tools like Google Lens. This requires a shift in strategy. For visual search, high-quality, well-labeled images with descriptive alt text are essential. For voice search, focus on long-tail keywords and conversational phrases that mimic how people naturally speak.</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">3. E-E-A-T is Non-Negotiable</h3>
@@ -45,7 +46,7 @@ const posts: BlogPost[] = [
     tags: ['AI', 'Content Marketing'],
     content: (
       <div>
-        <p>The integration of Artificial Intelligence into content marketing workflows is no longer a luxury—it's a necessity for staying competitive. AI tools can augment human creativity and provide data-driven insights to make your content more effective. Let's explore how.</p>
+        <p>{'The integration of Artificial Intelligence into content marketing workflows is no longer a luxury—it\'s a necessity for staying competitive. AI tools can augment human creativity and provide data-driven insights to make your content more effective. Let\'s explore how.'}</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">1. Hyper-Personalization at Scale</h3>
         <p>AI algorithms can analyze user data to deliver personalized content experiences. This goes beyond simply using a person's name in an email. AI can recommend relevant articles, tailor website copy based on user behavior, and create dynamic content that adapts to individual needs, leading to higher engagement and conversion rates.</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">2. Smarter Keyword Research and Topic Clustering</h3>
@@ -70,9 +71,9 @@ const posts: BlogPost[] = [
         <h3 className="mt-6 mb-4 font-bold text-xl">1. Creating Linkable Assets</h3>
         <p>Instead of just asking for links, create something that people naturally want to link to. This could be an original research report, an interactive tool, a comprehensive guide, or a stunning infographic. These "linkable assets" provide real value and serve as a magnet for backlinks from authoritative sites.</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">2. Strategic Digital PR</h3>
-        <p>Digital PR involves creating newsworthy stories and campaigns that journalists and bloggers want to cover. This could involve data-backed studies, expert commentary on trending topics, or creative campaigns that capture the public's imagination. A successful digital PR hit can result in dozens of high-authority backlinks at once.</p>
+        <p>{'Digital PR involves creating newsworthy stories and campaigns that journalists and bloggers want to cover. This could involve data-backed studies, expert commentary on trending topics, or creative campaigns that capture the public\'s imagination. A successful digital PR hit can result in dozens of high-authority backlinks at once.'}</p>
         <h3 className="mt-6 mb-4 font-bold text-xl">3. Broken Link Building at Scale</h3>
-        <p>This classic technique is still highly effective. The advanced approach involves using tools to systematically find broken external links on authoritative websites in your niche. You can then reach out to the site owner, inform them of the broken link, and suggest your own relevant content as a replacement. It's a win-win: you help them fix their site, and you get a valuable backlink.</p>
+        <p>{'This classic technique is still highly effective. The advanced approach involves using tools to systematically find broken external links on authoritative websites in your niche. You can then reach out to the site owner, inform them of the broken link, and suggest your own relevant content as a replacement. It\'s a win-win: you help them fix their site, and you get a valuable backlink.'}</p>
       </div>
     ),
   },
