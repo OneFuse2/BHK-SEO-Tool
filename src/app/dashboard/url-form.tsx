@@ -16,8 +16,8 @@ export default function UrlForm() {
     e.preventDefault();
     if (!url || !url.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please enter a valid URL.',
+        title: 'URL is required',
+        description: 'Please enter a website URL to analyze.',
         variant: 'destructive',
       });
       return;
@@ -39,7 +39,7 @@ export default function UrlForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2" noValidate>
       <Input
         type="url"
         value={url}

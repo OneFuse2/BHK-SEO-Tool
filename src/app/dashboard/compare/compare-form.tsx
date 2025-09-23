@@ -15,30 +15,28 @@ export default function CompareForm() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const validateUrl = (url: string) => {
-    if (!url || !url.trim()) {
-      return 'Please enter a URL.';
-    }
-    try {
-      new URL(url);
-    } catch (_) {
-      return 'Please enter a complete and valid URL (e.g., https://example.com).';
-    }
-    return null;
-  }
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const url1Error = validateUrl(url1);
-    if (url1Error) {
-      toast({ title: 'Invalid First URL', description: url1Error, variant: 'destructive' });
+    if (!url1 || !url1.trim()) {
+      toast({ title: 'First URL is missing', description: 'Please enter a URL to compare.', variant: 'destructive' });
+      return;
+    }
+    try {
+      new URL(url1);
+    } catch (_) {
+      toast({ title: 'Invalid First URL', description: 'Please enter a complete and valid URL (e.g., https://example.com).', variant: 'destructive' });
       return;
     }
 
-    const url2Error = validateUrl(url2);
-    if (url2Error) {
-      toast({ title: 'Invalid Second URL', description: url2Error, variant: 'destructive' });
+    if (!url2 || !url2.trim()) {
+        toast({ title: 'Second URL is missing', description: 'Please enter a second URL to compare.', variant: 'destructive' });
+        return;
+    }
+    try {
+      new URL(url2);
+    } catch (_) {
+      toast({ title: 'Invalid Second URL', description: 'Please enter a complete and valid URL (e.g., https://example.com).', variant: 'destructive' });
       return;
     }
 
@@ -53,7 +51,7 @@ export default function CompareForm() {
   return (
     <Card>
       <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                     type="url"
