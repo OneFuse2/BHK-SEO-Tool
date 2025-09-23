@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -16,6 +15,7 @@ const navLinks = [
   { href: '/dashboard/dns-checker', label: 'DNS Checker' },
   { href: '/dashboard/speed-test', label: 'Speed Test' },
   { href: '/dashboard/ip-checker', label: 'IP Checker' },
+  { href: '/dashboard/meta-generator', label: 'Meta Tag Generator' },
 ];
 
 export default function Header() {
