@@ -1,9 +1,13 @@
+
 import { getBlogPost, getBlogPosts } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+
+// Ensure new posts can be rendered on demand
+export const dynamic = 'force-dynamic';
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = getBlogPost(params.slug);
@@ -38,9 +42,10 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                     className="w-full h-auto rounded-lg shadow-lg mb-8"
                     priority
                 />
-                <div className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground">
-                    {post.content}
-                </div>
+                <div 
+                  className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground"
+                  dangerouslySetInnerHTML={{ __html: post.content }} 
+                />
             </article>
         </div>
 
@@ -79,9 +84,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   );
 }
 
+// remove generateStaticParams to make the page dynamic
+/*
 export async function generateStaticParams() {
   const posts = getBlogPosts();
   return posts.map((post) => ({
     slug: post.slug,
   }));
 }
+*/
