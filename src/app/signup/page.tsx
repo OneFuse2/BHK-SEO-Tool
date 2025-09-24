@@ -1,10 +1,11 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Github, Mail, Lock } from 'lucide-react';
+import { Github, Mail, Lock, User, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '@/components/logo';
@@ -26,7 +27,7 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
-export default function LoginPage() {
+export default function SignupPage() {
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] bg-gradient-to-r from-purple-50 to-blue-50 px-4">
             <div className="absolute top-24">
@@ -35,11 +36,19 @@ export default function LoginPage() {
             <Card className="w-full max-w-4xl mx-auto shadow-2xl rounded-2xl overflow-hidden grid md:grid-cols-2">
                 <CardContent className="p-8 md:p-12">
                     <div className="text-left">
-                        <h1 className="text-3xl font-bold tracking-tight">Sign In</h1>
-                        <p className="text-muted-foreground mt-2">Login to your account</p>
+                        <h1 className="text-3xl font-bold tracking-tight">Create an Account</h1>
+                        <p className="text-muted-foreground mt-2">Join our community to get started.</p>
                     </div>
 
                     <form className="mt-8 space-y-6">
+                         <div className="space-y-2">
+                            <Label htmlFor="fullname">Full Name</Label>
+                             <div className="relative">
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Input id="fullname" type="text" placeholder="John Doe" required className="pl-10" />
+                            </div>
+                        </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
                              <div className="relative">
@@ -49,10 +58,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <Label htmlFor="password">Password</Label>
-                                <Link href="#" className="text-sm text-primary hover:underline">Forgot your password?</Link>
-                            </div>
+                            <Label htmlFor="password">Password</Label>
                              <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input id="password" type="password" required className="pl-10" />
@@ -60,7 +66,7 @@ export default function LoginPage() {
                         </div>
 
                         <Button type="submit" className="w-full h-11" size="lg">
-                            Log in
+                            Create account
                         </Button>
                     </form>
 
@@ -69,7 +75,7 @@ export default function LoginPage() {
                             <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                            <span className="bg-card px-2 text-muted-foreground">Or sign up with</span>
                         </div>
                     </div>
 
@@ -86,28 +92,29 @@ export default function LoginPage() {
                     </div>
 
                     <p className="mt-8 text-center text-sm text-muted-foreground">
-                        Don't have an account?{' '}
-                        <Link href="/signup" className="font-semibold text-primary hover:underline">
-                            Create an account
+                        Already have an account?{' '}
+                        <Link href="/login" className="font-semibold text-primary hover:underline">
+                            Log in
                         </Link>
                     </p>
                 </CardContent>
 
                 <div className="hidden md:flex flex-col items-center justify-center bg-blue-50/50 p-12 text-center border-l">
-                    <Image
-                        src="https://picsum.photos/seed/login-promo/400/300"
+                     <Image
+                        src="https://picsum.photos/seed/signup-promo/400/300"
                         alt="Productivity Illustration"
                         width={400}
                         height={300}
-                        data-ai-hint="productivity tools illustration"
+                        data-ai-hint="team collaboration illustration"
                         className="rounded-lg"
                     />
-                    <h2 className="text-2xl font-bold mt-8">Unlock Your Productivity</h2>
+                    <h2 className="text-2xl font-bold mt-8">Start Your Journey</h2>
                     <p className="text-muted-foreground mt-2 max-w-xs">
-                        Join a community of developers, students, and creators using our tools to work smarter.
+                       Create an account to access powerful tools and join a growing community of creators.
                     </p>
                 </div>
             </Card>
         </div>
     );
 }
+

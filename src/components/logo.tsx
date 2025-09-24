@@ -1,26 +1,13 @@
 
 import React from 'react';
+import { Briefcase } from 'lucide-react';
 
 const Logo: React.FC = () => {
   return (
-    <div className="flex items-center gap-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="32"
-        height="32"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="hsl(var(--foreground))"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-8 w-8 text-primary"
-      >
-        <path d="m12 14 4-4" />
-        <path d="M3.34 19a10 10 0 1 1 17.32 0" />
-      </svg>
-      <span className="font-bold text-xl text-foreground whitespace-nowrap">
-        BHK SEO Tools
+    <div className="flex items-center justify-center gap-2 bg-background/80 backdrop-blur-sm border rounded-full px-4 py-2 shadow-sm">
+      <Briefcase className="h-6 w-6 text-primary" />
+      <span className="font-bold text-lg text-foreground whitespace-nowrap">
+        BHK Tools Market
       </span>
     </div>
   );
