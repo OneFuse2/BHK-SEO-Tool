@@ -7,11 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Link as LinkIcon, Loader2, Sparkles, Wand2, FileText, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 import { createBlogPostFromUrl } from '@/ai/flows/create-blog-post-from-url';
+import { generateMetaTags } from '@/ai/flows/meta-tag-generator';
 import { fetchSitemapUrls } from '@/app/actions/fetch-sitemap';
-import { addBlogPost } from '@/lib/blog-data';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
 import { BlogPost } from '@/lib/blog-data';
@@ -50,6 +49,7 @@ async function generatePost(url: string, title: string): Promise<BlogPost & { sl
 
 interface ArticleState {
     title: string;
+    isGeneratingTitle: boolean;
     content: string;
     isGenerating: boolean;
     generatedPost: (BlogPost & { slug: string }) | null;
@@ -122,11 +122,28 @@ export default function BacklinkCreatorPage() {
 
     setIsLoading(false);
   };
+  
+  const handleGenerateTitle = async (url: string) => {
+    setArticles(prev => ({
+        ...prev, 
+        [url]: { title: '', content: '', isGenerating: false, generatedPost: null, isGeneratingTitle: true }
+    }));
+     try {
+      const { title } = await generateMetaTags({ url });
+      setArticles(prev => ({
+        ...prev,
+        [url]: { ...prev[url], title: title, isGeneratingTitle: false }
+      }));
+    } catch (e) {
+      toast({ title: 'Title Generation Failed', description: 'Could not generate a title for this URL.', variant: 'destructive' });
+      setArticles(prev => ({ ...prev, [url]: { ...prev[url], isGeneratingTitle: false }}));
+    }
+  }
 
   const handleGeneratePost = async (url: string) => {
     setArticles(prev => ({
         ...prev, 
-        [url]: { title: prev[url]?.title || '', content: '', isGenerating: true, generatedPost: null }
+        [url]: { ...prev[url], content: '', isGenerating: true, generatedPost: null }
     }));
 
     try {
@@ -143,7 +160,7 @@ export default function BacklinkCreatorPage() {
             description: "Your new blog post is now available on the blog page.",
             action: (
                 <Button asChild variant="outline">
-                    <Link href={`/blog/${post.slug}`}>View Post</Link>
+                    <Link href={`/blog/${post.slug}`} target="_blank">View Post</Link>
                 </Button>
             )
         });
@@ -267,10 +284,19 @@ export default function BacklinkCreatorPage() {
                                                     <Input 
                                                         placeholder="Enter a title or let AI generate one"
                                                         value={articles[url]?.title || ''}
-                                                        onChange={(e) => setArticles(prev => ({...prev, [url]: {...prev[url], title: e.target.value, isGenerating: false, content: '', generatedPost: null }}))}
+                                                        onChange={(e) => setArticles(prev => ({...prev, [url]: {...prev[url], title: e.target.value, isGenerating: false, content: '', generatedPost: null, isGeneratingTitle: false }}))}
                                                         className="pr-10"
+                                                        disabled={articles[url]?.isGeneratingTitle}
                                                     />
-                                                     <Wand2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                                     <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                                                        onClick={() => handleGenerateTitle(url)}
+                                                        disabled={articles[url]?.isGeneratingTitle || articles[url]?.isGenerating}
+                                                     >
+                                                        {articles[url]?.isGeneratingTitle ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wand2 className="h-5 w-5 text-muted-foreground" />}
+                                                     </Button>
                                                 </div>
                                             </div>
                                              <div>
@@ -283,7 +309,7 @@ export default function BacklinkCreatorPage() {
                                                 />
                                             </div>
                                             <div className="flex justify-between items-center">
-                                                <Button onClick={() => handleGeneratePost(url)} disabled={articles[url]?.isGenerating}>
+                                                <Button onClick={() => handleGeneratePost(url)} disabled={articles[url]?.isGenerating || articles[url]?.isGeneratingTitle}>
                                                     {articles[url]?.isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
                                                     Generate Article
                                                 </Button>
