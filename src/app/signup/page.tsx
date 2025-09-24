@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Github, Mail, Lock, User, Briefcase } from 'lucide-react';
+import { Github, Mail, Lock, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '@/components/logo';
@@ -29,11 +29,11 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function SignupPage() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] px-4">
-            <div className="absolute top-24">
-                <Logo />
-            </div>
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] px-4 py-12">
             <Card className="w-full max-w-4xl mx-auto shadow-2xl rounded-2xl overflow-hidden grid md:grid-cols-2">
+                 <div className="md:col-span-2 p-4 bg-muted/30 rounded-t-2xl">
+                    <Logo />
+                </div>
                 <CardContent className="p-8 md:p-12">
                     <div className="text-left">
                         <h1 className="text-3xl font-bold tracking-tight">Create an Account</h1>
@@ -117,4 +117,3 @@ export default function SignupPage() {
         </div>
     );
 }
-
