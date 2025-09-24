@@ -9,13 +9,23 @@ import { Link as LinkIcon, Loader2, Sparkles, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
+import { createBlogPostFromUrl } from '@/ai/flows/create-blog-post-from-url';
+import { getBlogPosts } from '@/lib/blog-data';
+import { fetchSitemapUrls } from '@/app/actions/fetch-sitemap';
+
 
 // Dummy function for now, will be replaced with actual implementation
 async function generatePost(url: string, title: string) {
     console.log(`Generating post for ${url} with title "${title}"`);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    // In the future, this will call the AI flow and save the post.
-    return { slug: `/${title.toLowerCase().replace(/\s+/g, '-')}` };
+    const newPost = await createBlogPostFromUrl({ url, title });
+    // This is a temporary in-memory solution.
+    // In a real app, you would save this to a database.
+    getBlogPosts().unshift({
+      ...newPost,
+      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      content: <div dangerouslySetInnerHTML={{ __html: newPost.content }} />
+    });
+    return { slug: `/${newPost.slug}` };
 }
 
 
@@ -35,28 +45,21 @@ export default function BacklinkCreatorPage() {
     setIsLoading(true);
     setUrls([]);
     try {
-      // NOTE: This is a simplified client-side fetch and will be blocked by CORS for most external URLs.
-      // A robust solution requires a server-side proxy to fetch the sitemap content.
-      // For demo purposes, this may work with permissive sitemaps.
-      const response = await fetch(sitemapUrl);
-      if (!response.ok) throw new Error('Failed to fetch sitemap.');
-      const text = await response.text();
-      
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(text, 'application/xml');
-      const urlNodes = xml.getElementsByTagName('loc');
-      const foundUrls = Array.from(urlNodes).map(node => node.textContent || '').filter(Boolean);
+        const result = await fetchSitemapUrls(sitemapUrl);
+        if (result.error) {
+            throw new Error(result.error);
+        }
+        
+        if(result.urls.length === 0) {
+            toast({ title: 'No URLs Found', description: 'Could not find any URLs in the sitemap.', variant: 'destructive'});
+        }
+        setUrls(result.urls);
 
-      if(foundUrls.length === 0) {
-        toast({ title: 'No URLs Found', description: 'Could not find any <loc> tags in the sitemap.', variant: 'destructive'});
-      }
-      setUrls(foundUrls);
-
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast({
         title: 'Failed to Parse Sitemap',
-        description: 'Could not fetch or parse the sitemap. Please check the URL and ensure it is accessible.',
+        description: error.message || 'Could not fetch or parse the sitemap. Please check the URL and ensure it is accessible.',
         variant: 'destructive',
       });
     }
