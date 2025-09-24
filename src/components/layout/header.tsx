@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -14,6 +15,8 @@ import Logo from '@/components/logo';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import React from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import UserNav from './user-nav';
 
 const mainNavLinks = [
   { href: '/features', label: 'Features' },
@@ -34,6 +37,7 @@ const toolsLinks = [
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { user, loading } = useAuth();
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link
@@ -75,12 +79,18 @@ export default function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" asChild>
-            <Link href="/login">Log In</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/signup">Get Started</Link>
-          </Button>
+          {loading ? null : user ? (
+            <UserNav />
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/login">Log In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Get Started</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <div className="md:hidden">
@@ -103,12 +113,21 @@ export default function Header() {
                     ))}
                 </div>
                 <div className="mt-6 flex flex-col gap-4">
-                  <Button variant="ghost" asChild>
-                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
-                  </Button>
-                  <Button asChild>
-                    <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>Get Started</Link>
-                  </Button>
+                  {loading ? null : user ? (
+                      <Button onClick={() => {
+                        // In a real app, you would call your sign-out function here
+                        setIsMobileMenuOpen(false);
+                      }}>Log Out</Button>
+                  ) : (
+                    <>
+                      <Button variant="ghost" asChild>
+                        <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
+                      </Button>
+                      <Button asChild>
+                        <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>Get Started</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </nav>
             </SheetContent>

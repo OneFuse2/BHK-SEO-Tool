@@ -1,8 +1,10 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import PageLayout from '@/components/layout/page-layout';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: 'BHK SEO Tools - AI-Powered SEO Analysis',
@@ -25,9 +27,11 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased flex flex-col min-h-screen')}>
-        <PageLayout>
-          {children}
-        </PageLayout>
+        <AuthProvider>
+          <PageLayout>
+            {children}
+          </PageLayout>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>
