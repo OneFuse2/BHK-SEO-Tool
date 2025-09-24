@@ -16,6 +16,7 @@ const navLinks = [
   { href: '/dashboard/speed-test', label: 'Speed Test' },
   { href: '/dashboard/ip-checker', label: 'IP Checker' },
   { href: '/dashboard/meta-generator', label: 'Meta Tag Generator' },
+  { href: '/dashboard/backlink-creator', label: 'Content Generator' },
 ];
 
 export default function Header() {
