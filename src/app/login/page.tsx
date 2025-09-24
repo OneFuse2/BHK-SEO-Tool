@@ -32,7 +32,9 @@ export default function LoginPage() {
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] px-4 py-12">
             <Card className="w-full max-w-4xl mx-auto shadow-2xl rounded-2xl overflow-hidden grid md:grid-cols-2">
                  <div className="md:col-span-2 p-4 bg-muted/30 rounded-t-2xl">
-                    <Logo />
+                    <Link href="/">
+                        <Logo />
+                    </Link>
                 </div>
                 <CardContent className="p-8 md:p-12">
                     <div className="text-left">
