@@ -28,7 +28,7 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function LoginPage() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] bg-gradient-to-r from-purple-50 to-blue-50 px-4">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] px-4">
             <div className="absolute top-24">
                 <Logo />
             </div>
