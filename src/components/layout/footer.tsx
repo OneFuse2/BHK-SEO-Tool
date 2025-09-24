@@ -19,13 +19,13 @@ export default function Footer() {
   return (
     <footer className="bg-background border-t">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
                 <Logo />
             </Link>
             <p className="text-muted-foreground text-sm max-w-xs">AI-powered SEO analysis and optimization for modern websites.</p>
-            <div className="flex space-x-2 mt-4">
+            <div className="flex space-x-1 mt-4">
               {socialLinks.map(link => (
                 <Button key={link.label} variant="ghost" size="icon" asChild>
                   <a href={link.href} aria-label={link.label}>{link.icon}</a>
@@ -33,11 +33,11 @@ export default function Footer() {
               ))}
             </div>
           </div>
-          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-8">
             {footerLinks.map(section => (
               <div key={section.title}>
                 <h3 className="font-semibold text-foreground mb-4">{section.title}</h3>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {section.links.map(link => (
                     <li key={link.label}>
                       <Link href={link.href} className="text-muted-foreground hover:text-primary transition-colors text-sm">
