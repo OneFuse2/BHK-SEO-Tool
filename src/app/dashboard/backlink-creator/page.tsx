@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef } from 'react';
@@ -14,6 +13,7 @@ import { fetchSitemapUrls } from '@/app/actions/fetch-sitemap';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
 import { BlogPost } from '@/lib/blog-data';
+import RequestAccessForm from './request-access-form';
 
 
 async function generatePost(url: string, title: string): Promise<BlogPost & { slug: string }> {
@@ -56,6 +56,9 @@ interface ArticleState {
 }
 
 export default function BacklinkCreatorPage() {
+  // In a real app, this would come from your authentication system (e.g., Firebase Auth roles/claims)
+  const isOwner = false;
+
   const [sitemapUrl, setSitemapUrl] = useState('');
   const [urls, setUrls] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -269,7 +272,9 @@ export default function BacklinkCreatorPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Generated Articles</CardTitle>
-                        <CardDescription>Here are the articles generated from your sitemap. Click on a URL to view and edit its article.</CardDescription>
+                        <CardDescription>
+                            {isOwner ? "Here are the articles generated from your sitemap. Click on a URL to view and edit its article." : "Article generation is only available for website owners. You can see the URLs found below."}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Accordion type="single" collapsible className="w-full">
@@ -277,49 +282,53 @@ export default function BacklinkCreatorPage() {
                                 <AccordionItem value={url} key={url}>
                                     <AccordionTrigger>{url}</AccordionTrigger>
                                     <AccordionContent>
-                                        <div className="p-4 bg-muted/50 rounded-md space-y-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-foreground mb-1">Article Title</label>
-                                                <div className="relative">
-                                                    <Input 
-                                                        placeholder="Enter a title or let AI generate one"
-                                                        value={articles[url]?.title || ''}
-                                                        onChange={(e) => setArticles(prev => ({...prev, [url]: {...prev[url], title: e.target.value, isGenerating: false, content: '', generatedPost: null, isGeneratingTitle: false }}))}
-                                                        className="pr-10"
-                                                        disabled={articles[url]?.isGeneratingTitle}
+                                        {isOwner ? (
+                                            <div className="p-4 bg-muted/50 rounded-md space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-foreground mb-1">Article Title</label>
+                                                    <div className="relative">
+                                                        <Input 
+                                                            placeholder="Enter a title or let AI generate one"
+                                                            value={articles[url]?.title || ''}
+                                                            onChange={(e) => setArticles(prev => ({...prev, [url]: {...prev[url], title: e.target.value, isGenerating: false, content: '', generatedPost: null, isGeneratingTitle: false }}))}
+                                                            className="pr-10"
+                                                            disabled={articles[url]?.isGeneratingTitle}
+                                                        />
+                                                        <Button 
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                                                            onClick={() => handleGenerateTitle(url)}
+                                                            disabled={articles[url]?.isGeneratingTitle || articles[url]?.isGenerating}
+                                                        >
+                                                            {articles[url]?.isGeneratingTitle ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wand2 className="h-5 w-5 text-muted-foreground" />}
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-foreground mb-1">Generated Content</label>
+                                                    <Textarea 
+                                                        placeholder="Click 'Generate Article' to create content."
+                                                        readOnly 
+                                                        value={articles[url]?.isGenerating ? 'Generating...' : articles[url]?.content || ''}
+                                                        rows={10}
                                                     />
-                                                     <Button 
-                                                        variant="ghost" 
-                                                        size="icon" 
-                                                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                                                        onClick={() => handleGenerateTitle(url)}
-                                                        disabled={articles[url]?.isGeneratingTitle || articles[url]?.isGenerating}
-                                                     >
-                                                        {articles[url]?.isGeneratingTitle ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wand2 className="h-5 w-5 text-muted-foreground" />}
-                                                     </Button>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <Button onClick={() => handleGeneratePost(url)} disabled={articles[url]?.isGenerating || articles[url]?.isGeneratingTitle}>
+                                                        {articles[url]?.isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
+                                                        Generate Article
+                                                    </Button>
+                                                    {articles[url]?.generatedPost && (
+                                                        <Button asChild variant="outline">
+                                                            <Link href={`/blog/${articles[url].generatedPost?.slug}`} target="_blank">View Post</Link>
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             </div>
-                                             <div>
-                                                <label className="block text-sm font-medium text-foreground mb-1">Generated Content</label>
-                                                <Textarea 
-                                                    placeholder="Click 'Generate Article' to create content."
-                                                    readOnly 
-                                                    value={articles[url]?.isGenerating ? 'Generating...' : articles[url]?.content || ''}
-                                                    rows={10}
-                                                />
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <Button onClick={() => handleGeneratePost(url)} disabled={articles[url]?.isGenerating || articles[url]?.isGeneratingTitle}>
-                                                    {articles[url]?.isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
-                                                    Generate Article
-                                                </Button>
-                                                {articles[url]?.generatedPost && (
-                                                    <Button asChild variant="outline">
-                                                        <Link href={`/blog/${articles[url].generatedPost?.slug}`} target="_blank">View Post</Link>
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </div>
+                                        ) : (
+                                            <RequestAccessForm />
+                                        )}
                                     </AccordionContent>
                                 </AccordionItem>
                             ))}
