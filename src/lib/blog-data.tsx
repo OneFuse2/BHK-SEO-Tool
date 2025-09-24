@@ -1,5 +1,6 @@
 
-import React from 'react';
+import fs from 'fs';
+import path from 'path';
 
 export interface BlogPost {
   slug: string;
@@ -10,20 +11,43 @@ export interface BlogPost {
   image: string;
   dataAiHint: string;
   tags: string[];
-  content: React.ReactNode;
+  content: string;
 }
 
-// This data is now just a placeholder.
-// The blog will be populated by AI-generated content.
-const posts: BlogPost[] = [];
+const postsFilePath = path.join(process.cwd(), 'src', 'lib', 'blog-posts.json');
+
+function readPosts(): BlogPost[] {
+  try {
+    const postsJson = fs.readFileSync(postsFilePath, 'utf-8');
+    return JSON.parse(postsJson);
+  } catch (error) {
+    // If the file doesn't exist, return an empty array
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+}
+
+function writePosts(posts: BlogPost[]): void {
+  fs.writeFileSync(postsFilePath, JSON.stringify(posts, null, 2), 'utf-8');
+}
+
 
 export function getBlogPosts(): BlogPost[] {
-  // In the future, this will fetch posts from a database or a file system
-  // where AI-generated posts are stored.
-  return posts;
+  const posts = readPosts();
+  // sort by date descending
+  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export function getBlogPost(slug: string): BlogPost | undefined {
-  // In the future, this will fetch a single post.
-  return posts.find((post) => post.slug === slug);
+  return getBlogPosts().find((post) => post.slug === slug);
+}
+
+export function addBlogPost(post: BlogPost) {
+  const posts = getBlogPosts();
+  // Remove any existing post with the same slug
+  const filteredPosts = posts.filter(p => p.slug !== post.slug);
+  const newPosts = [post, ...filteredPosts];
+  writePosts(newPosts);
 }

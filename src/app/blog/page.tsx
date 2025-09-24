@@ -1,3 +1,4 @@
+
 import { getBlogPosts, BlogPost } from '@/lib/blog-data';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
@@ -5,6 +6,8 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 export default function BlogPage() {
   const posts = getBlogPosts();
@@ -27,40 +30,47 @@ export default function BlogPage() {
       </section>
 
       <section className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post) => (
-            <Card key={post.slug} className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardHeader className="p-0">
-                <Link href={`/blog/${post.slug}`}>
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    width={400}
-                    height={250}
-                    data-ai-hint={post.dataAiHint}
-                    className="w-full h-48 object-cover"
-                  />
-                </Link>
-              </CardHeader>
-              <CardContent className="p-6 flex-grow">
-                <h2 className="text-xl font-bold mb-2">
-                  <Link href={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
-                    {post.title}
+        {posts.length === 0 ? (
+          <div className="text-center py-16">
+            <h2 className="text-2xl font-semibold text-foreground">No Blog Posts Yet</h2>
+            <p className="mt-2 text-muted-foreground">Use the Content Generator to create your first post!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+              <Card key={post.slug} className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader className="p-0">
+                  <Link href={`/blog/${post.slug}`}>
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      width={400}
+                      height={250}
+                      data-ai-hint={post.dataAiHint}
+                      className="w-full h-48 object-cover"
+                    />
                   </Link>
-                </h2>
-                <p className="text-muted-foreground text-sm mb-4">
-                  {post.author} • {post.date}
-                </p>
-                <p className="text-muted-foreground line-clamp-3">{post.excerpt}</p>
-              </CardContent>
-              <CardFooter className="p-6 pt-0">
-                <Button asChild variant="link" className="p-0">
-                  <Link href={`/blog/${post.slug}`}>Read More →</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                </CardHeader>
+                <CardContent className="p-6 flex-grow">
+                  <h2 className="text-xl font-bold mb-2">
+                    <Link href={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
+                      {post.title}
+                    </Link>
+                  </h2>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {post.author} • {post.date}
+                  </p>
+                  <p className="text-muted-foreground line-clamp-3">{post.excerpt}</p>
+                </CardContent>
+                <CardFooter className="p-6 pt-0">
+                  <Button asChild variant="link" className="p-0">
+                    <Link href={`/blog/${post.slug}`}>Read More →</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
