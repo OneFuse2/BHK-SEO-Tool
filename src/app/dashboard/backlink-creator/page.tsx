@@ -12,28 +12,24 @@ import Link from 'next/link';
 import { createBlogPostFromUrl } from '@/ai/flows/create-blog-post-from-url';
 import { fetchSitemapUrls } from '@/app/actions/fetch-sitemap';
 import { addBlogPost } from '@/lib/blog-data';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Textarea } from '@/components/ui/textarea';
+import { BlogPost } from '@/lib/blog-data';
 
 
-async function generatePost(url: string, title: string) {
+async function generatePost(url: string, title: string): Promise<BlogPost & { slug: string }> {
     console.log(`Generating post for ${url} with title "${title}"`);
     const newPostData = await createBlogPostFromUrl({ url, title });
     
-    // In a real app this would be a server action to write to a DB
-    // For now, this is a client-side simulation and won't persist
-    const newPost = {
+    const newPost: BlogPost = {
       ...newPostData,
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
     };
 
-    // This is still a limitation - we can't directly trigger a file write from a client component
-    // in a simple way without a dedicated API route or server action. 
-    // We will create a server action for this.
     try {
         const response = await fetch('/api/add-post', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newPost),
         });
 
@@ -43,7 +39,7 @@ async function generatePost(url: string, title: string) {
         }
 
         const result = await response.json();
-        return { slug: result.slug };
+        return { ...newPost, slug: result.slug };
 
     } catch (error) {
         console.error("Failed to save post via API", error);
@@ -52,17 +48,23 @@ async function generatePost(url: string, title: string) {
 }
 
 
+interface ArticleState {
+    title: string;
+    content: string;
+    isGenerating: boolean;
+    generatedPost: (BlogPost & { slug: string }) | null;
+}
+
 export default function BacklinkCreatorPage() {
   const [sitemapUrl, setSitemapUrl] = useState('');
   const [urls, setUrls] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState('');
+  const [articles, setArticles] = useState<Record<string, ArticleState>>({});
 
   const parseSitemap = (sitemapContent: string) => {
-    // This is a simple regex parser, not a full XML parser.
     const urlRegex = /<loc>(.*?)<\/loc>/g;
     const foundUrls = [];
     let match;
@@ -70,7 +72,6 @@ export default function BacklinkCreatorPage() {
         foundUrls.push(match[1]);
     }
      if (foundUrls.length === 0) {
-        // Fallback for XML namespaces which the regex might miss
         const urlRegexNs = /<url><loc>(.*?)<\/loc>/g;
         while ((match = urlRegexNs.exec(sitemapContent)) !== null) {
             foundUrls.push(match[1]);
@@ -83,14 +84,14 @@ export default function BacklinkCreatorPage() {
     e.preventDefault();
     setIsLoading(true);
     setUrls([]);
+    setArticles({});
+
+    let sitemapContent = '';
 
     if (sitemapUrl) {
-        // Fetch from URL
         try {
             const result = await fetchSitemapUrls(sitemapUrl);
-            if (result.error) {
-                throw new Error(result.error);
-            }
+            if (result.error) throw new Error(result.error);
             if(result.urls.length === 0) {
                 toast({ title: 'No URLs Found', description: 'Could not find any URLs in the sitemap.', variant: 'destructive'});
             }
@@ -104,21 +105,17 @@ export default function BacklinkCreatorPage() {
             });
         }
     } else if (fileInputRef.current?.files?.[0]) {
-        // Process uploaded file
         const file = fileInputRef.current.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const content = e.target?.result as string;
-            const foundUrls = parseSitemap(content);
-             if(foundUrls.length === 0) {
+        try {
+            sitemapContent = await file.text();
+            const foundUrls = parseSitemap(sitemapContent);
+            if(foundUrls.length === 0) {
                 toast({ title: 'No URLs Found', description: 'Could not find any URLs in the sitemap file.', variant: 'destructive'});
             }
             setUrls(foundUrls);
-        };
-        reader.onerror = (e) => {
+        } catch (e) {
             toast({ title: 'Failed to Read File', description: 'There was an error reading your sitemap file.', variant: 'destructive' });
         }
-        reader.readAsText(file);
     } else {
         toast({ title: 'No Input Provided', description: 'Please provide a sitemap URL or upload a sitemap.xml file.', variant: 'destructive' });
     }
@@ -127,23 +124,32 @@ export default function BacklinkCreatorPage() {
   };
 
   const handleGeneratePost = async (url: string) => {
-    setIsGenerating(prev => ({...prev, [url]: true}));
+    setArticles(prev => ({
+        ...prev, 
+        [url]: { title: prev[url]?.title || '', content: '', isGenerating: true, generatedPost: null }
+    }));
+
     try {
-        const title = `AI-Generated content for ${url}`;
-        const result = await generatePost(url, title);
+        const title = articles[url]?.title || ''; // Use user-provided title if available
+        const post = await generatePost(url, title);
+        
+        setArticles(prev => ({
+            ...prev,
+            [url]: { ...prev[url], isGenerating: false, content: post.content, generatedPost: post }
+        }));
+        
         toast({
             title: "Blog Post Generated!",
             description: "Your new blog post is now available on the blog page.",
             action: (
                 <Button asChild variant="outline">
-                    <Link href={`/blog/${result.slug}`}>View Post</Link>
+                    <Link href={`/blog/${post.slug}`}>View Post</Link>
                 </Button>
             )
         });
     } catch (e: any) {
+        setArticles(prev => ({ ...prev, [url]: { ...prev[url], isGenerating: false }}));
         toast({ title: 'Generation Failed', description: e.message || 'Could not generate the blog post.', variant: 'destructive'});
-    } finally {
-        setIsGenerating(prev => ({...prev, [url]: false}));
     }
   }
 
@@ -234,7 +240,7 @@ export default function BacklinkCreatorPage() {
                 
                 <Button type="submit" size="lg" className="h-12 mt-4" disabled={isLoading}>
                   {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
-                  Get URLs & Generate
+                  Get URLs
                 </Button>
               </form>
             </CardContent>
@@ -245,21 +251,53 @@ export default function BacklinkCreatorPage() {
             <div className="mt-12 text-left">
                 <Card>
                     <CardHeader>
-                        <CardTitle>URLs Found in Sitemap</CardTitle>
-                        <CardDescription>Click the "Generate Post" button next to any URL to create a new blog post based on its content.</CardDescription>
+                        <CardTitle>Generated Articles</CardTitle>
+                        <CardDescription>Here are the articles generated from your sitemap. Click on a URL to view and edit its article.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <ul className="space-y-2">
+                        <Accordion type="single" collapsible className="w-full">
                             {urls.map(url => (
-                                <li key={url} className="flex justify-between items-center p-3 bg-muted/50 rounded-md">
-                                    <Link href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate mr-4">{url}</Link>
-                                    <Button size="sm" onClick={() => handleGeneratePost(url)} disabled={isGenerating[url]}>
-                                        {isGenerating[url] ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
-                                        Generate Post
-                                    </Button>
-                                </li>
+                                <AccordionItem value={url} key={url}>
+                                    <AccordionTrigger>{url}</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="p-4 bg-muted/50 rounded-md space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-foreground mb-1">Article Title</label>
+                                                <div className="relative">
+                                                    <Input 
+                                                        placeholder="Enter a title or let AI generate one"
+                                                        value={articles[url]?.title || ''}
+                                                        onChange={(e) => setArticles(prev => ({...prev, [url]: {...prev[url], title: e.target.value, isGenerating: false, content: '', generatedPost: null }}))}
+                                                        className="pr-10"
+                                                    />
+                                                     <Wand2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                                </div>
+                                            </div>
+                                             <div>
+                                                <label className="block text-sm font-medium text-foreground mb-1">Generated Content</label>
+                                                <Textarea 
+                                                    placeholder="Click 'Generate Article' to create content."
+                                                    readOnly 
+                                                    value={articles[url]?.isGenerating ? 'Generating...' : articles[url]?.content || ''}
+                                                    rows={10}
+                                                />
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <Button onClick={() => handleGeneratePost(url)} disabled={articles[url]?.isGenerating}>
+                                                    {articles[url]?.isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
+                                                    Generate Article
+                                                </Button>
+                                                {articles[url]?.generatedPost && (
+                                                    <Button asChild variant="outline">
+                                                        <Link href={`/blog/${articles[url].generatedPost?.slug}`} target="_blank">View Post</Link>
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
                             ))}
-                        </ul>
+                        </Accordion>
                     </CardContent>
                 </Card>
             </div>
@@ -268,5 +306,3 @@ export default function BacklinkCreatorPage() {
     </div>
   );
 }
-
-    

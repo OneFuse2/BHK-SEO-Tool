@@ -14,7 +14,7 @@ import { z } from 'genkit';
 
 const CreateBlogPostFromUrlInputSchema = z.object({
   url: z.string().url().describe('The URL to base the blog post on.'),
-  title: z.string().describe('A suggested title for the new blog post.'),
+  title: z.string().describe('A suggested title for the new blog post. If empty, a new one will be generated.'),
 });
 export type CreateBlogPostFromUrlInput = z.infer<typeof CreateBlogPostFromUrlInputSchema>;
 
@@ -45,7 +45,7 @@ Suggested Title: {{{title}}}
 
 1.  Analyze the content at the URL.
 2.  Write an engaging, well-structured, and SEO-optimized blog post. The post should be at least 500 words long.
-3.  Based on the content, create a new, compelling, and SEO-friendly title. The suggested title is just a hint.
+3.  Based on the content, create a new, compelling, and SEO-friendly title. If a 'Suggested Title' is provided and is relevant, use it as strong inspiration. If it's empty, create a new one from scratch.
 4.  Generate a URL-friendly slug from the new, improved title.
 5.  The output for the 'content' field must be a single string of clean, semantic HTML. Use only <p>, <h2>, <h3>, <ul>, <ol>, <li>, and <strong> tags. Do not include any attributes like 'class' or 'style'.
 6.  Create a concise excerpt (around 150 characters).
