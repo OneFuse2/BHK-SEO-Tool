@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Link as LinkIcon, Loader2, Sparkles, Wand2 } from 'lucide-react';
+import { Link as LinkIcon, Loader2, Sparkles, Wand2, FileText, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
@@ -58,34 +58,71 @@ export default function BacklinkCreatorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState('');
+
+  const parseSitemap = (sitemapContent: string) => {
+    // This is a simple regex parser, not a full XML parser.
+    const urlRegex = /<loc>(.*?)<\/loc>/g;
+    const foundUrls = [];
+    let match;
+    while ((match = urlRegex.exec(sitemapContent)) !== null) {
+        foundUrls.push(match[1]);
+    }
+     if (foundUrls.length === 0) {
+        // Fallback for XML namespaces which the regex might miss
+        const urlRegexNs = /<url><loc>(.*?)<\/loc>/g;
+        while ((match = urlRegexNs.exec(sitemapContent)) !== null) {
+            foundUrls.push(match[1]);
+        }
+    }
+    return foundUrls;
+  }
 
   const handleFetchSitemap = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!sitemapUrl) {
-      toast({ title: 'Sitemap URL is missing', description: 'Please enter the URL to your sitemap.xml file.', variant: 'destructive' });
-      return;
-    }
     setIsLoading(true);
     setUrls([]);
-    try {
-        const result = await fetchSitemapUrls(sitemapUrl);
-        if (result.error) {
-            throw new Error(result.error);
-        }
-        
-        if(result.urls.length === 0) {
-            toast({ title: 'No URLs Found', description: 'Could not find any URLs in the sitemap.', variant: 'destructive'});
-        }
-        setUrls(result.urls);
 
-    } catch (error: any) {
-      console.error(error);
-      toast({
-        title: 'Failed to Parse Sitemap',
-        description: error.message || 'Could not fetch or parse the sitemap. Please check the URL and ensure it is accessible.',
-        variant: 'destructive',
-      });
+    if (sitemapUrl) {
+        // Fetch from URL
+        try {
+            const result = await fetchSitemapUrls(sitemapUrl);
+            if (result.error) {
+                throw new Error(result.error);
+            }
+            if(result.urls.length === 0) {
+                toast({ title: 'No URLs Found', description: 'Could not find any URLs in the sitemap.', variant: 'destructive'});
+            }
+            setUrls(result.urls);
+        } catch (error: any) {
+            console.error(error);
+            toast({
+                title: 'Failed to Parse Sitemap',
+                description: error.message || 'Could not fetch or parse the sitemap. Please check the URL and ensure it is accessible.',
+                variant: 'destructive',
+            });
+        }
+    } else if (fileInputRef.current?.files?.[0]) {
+        // Process uploaded file
+        const file = fileInputRef.current.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target?.result as string;
+            const foundUrls = parseSitemap(content);
+             if(foundUrls.length === 0) {
+                toast({ title: 'No URLs Found', description: 'Could not find any URLs in the sitemap file.', variant: 'destructive'});
+            }
+            setUrls(foundUrls);
+        };
+        reader.onerror = (e) => {
+            toast({ title: 'Failed to Read File', description: 'There was an error reading your sitemap file.', variant: 'destructive' });
+        }
+        reader.readAsText(file);
+    } else {
+        toast({ title: 'No Input Provided', description: 'Please provide a sitemap URL or upload a sitemap.xml file.', variant: 'destructive' });
     }
+
     setIsLoading(false);
   };
 
@@ -110,41 +147,96 @@ export default function BacklinkCreatorPage() {
     }
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      setSitemapUrl(''); // Clear URL input if a file is chosen
+    } else {
+      setFileName('');
+    }
+  };
+
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="max-w-4xl mx-auto text-center">
-        <Wand2 className="mx-auto h-12 w-12 text-primary" />
-        <h1 className="mt-4 text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
-          Sitemap to Content Generator
-        </h1>
-        <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-          Paste your sitemap URL to automatically generate engaging blog posts for every page, boosting your content and internal linking structure.
-        </p>
-        <div className="mt-8">
+        <div className="flex items-center justify-center gap-4 mb-4">
+            <FileText className="h-12 w-12 text-primary" />
+            <div>
+                 <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight text-left">
+                    Bulk Article Generator from Sitemap
+                </h1>
+                <p className="text-left text-lg md:text-xl text-muted-foreground">
+                    Generate unique articles from a sitemap.
+                </p>
+            </div>
+        </div>
+        
+        <div className="mt-8 text-left">
           <Card>
+             <CardHeader>
+                <CardTitle>Sitemap Input</CardTitle>
+                <CardDescription>Provide a sitemap URL or upload a sitemap.xml file.</CardDescription>
+            </CardHeader>
             <CardContent className="p-6">
-              <form onSubmit={handleFetchSitemap} className="flex flex-col sm:flex-row gap-2">
-                <div className="relative flex-grow">
-                  <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    value={sitemapUrl}
-                    onChange={(e) => setSitemapUrl(e.target.value)}
-                    placeholder="https://your-website.com/sitemap.xml"
-                    className="h-12 text-base pl-10"
-                    disabled={isLoading}
-                  />
+              <form onSubmit={handleFetchSitemap} className="flex flex-col gap-4">
+                
+                <div>
+                  <label htmlFor="sitemap-url" className="block text-sm font-medium text-foreground mb-1">Sitemap URL</label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      id="sitemap-url"
+                      value={sitemapUrl}
+                      onChange={(e) => {
+                          setSitemapUrl(e.target.value);
+                          if (fileInputRef.current) fileInputRef.current.value = '';
+                          setFileName('');
+                      }}
+                      placeholder="https://your-website.com/sitemap.xml"
+                      className="text-base pl-10"
+                      disabled={isLoading}
+                    />
+                  </div>
                 </div>
-                <Button type="submit" size="lg" className="h-12" disabled={isLoading}>
+
+                <div className="relative flex items-center">
+                    <div className="flex-grow border-t border-muted"></div>
+                    <span className="flex-shrink mx-4 text-muted-foreground text-sm">OR</span>
+                    <div className="flex-grow border-t border-muted"></div>
+                </div>
+
+                <div>
+                    <label htmlFor="sitemap-file" className="block text-sm font-medium text-foreground mb-1">Upload Sitemap File</label>
+                    <div className="relative">
+                         <input 
+                            type="file" 
+                            id="sitemap-file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            accept=".xml, text/xml"
+                            disabled={isLoading}
+                        />
+                        <Button 
+                            type="button"
+                            variant="outline"
+                            className="w-full justify-start text-muted-foreground font-normal" 
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isLoading}
+                        >
+                            <Upload className="mr-2 h-4 w-4" />
+                            {fileName || "Choose File"}
+                        </Button>
+                    </div>
+                </div>
+                
+                <Button type="submit" size="lg" className="h-12 mt-4" disabled={isLoading}>
                   {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
-                  Fetch URLs
+                  Get URLs & Generate
                 </Button>
               </form>
-               <Alert className="mt-4 text-left">
-                  <AlertTitle>How does this work?</AlertTitle>
-                  <AlertDescription>
-                    This tool fetches all the URLs from your sitemap. You can then use our AI to generate a unique, SEO-friendly blog post for each URL, using the content of that page as context.
-                  </AlertDescription>
-                </Alert>
             </CardContent>
           </Card>
         </div>
@@ -176,3 +268,5 @@ export default function BacklinkCreatorPage() {
     </div>
   );
 }
+
+    
