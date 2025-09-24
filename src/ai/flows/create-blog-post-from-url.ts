@@ -11,13 +11,13 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const CreateBlogPostFromUrlInputSchema = z.object({
+const CreateBlogPostFromUrlInputSchema = z.object({
   url: z.string().url().describe('The URL to base the blog post on.'),
   title: z.string().describe('The title for the new blog post.'),
 });
 export type CreateBlogPostFromUrlInput = z.infer<typeof CreateBlogPostFromUrlInputSchema>;
 
-export const CreateBlogPostFromUrlOutputSchema = z.object({
+const CreateBlogPostFromUrlOutputSchema = z.object({
   slug: z.string().describe('The URL-friendly slug for the blog post.'),
   title: z.string().describe('The title of the generated blog post.'),
   content: z.string().describe('The full HTML content of the generated blog post.'),
