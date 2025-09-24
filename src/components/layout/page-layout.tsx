@@ -10,12 +10,13 @@ export default function PageLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
-    const noFooterPaths = ['/login', '/signup'];
-    const showFooter = !noFooterPaths.includes(pathname);
+    const noNavPaths = ['/login', '/signup'];
+    const showHeader = !noNavPaths.includes(pathname);
+    const showFooter = !noNavPaths.includes(pathname);
 
     return (
         <>
-            <Header />
+            {showHeader && <Header />}
             <main className="flex-grow">{children}</main>
             {showFooter && <Footer />}
         </>
