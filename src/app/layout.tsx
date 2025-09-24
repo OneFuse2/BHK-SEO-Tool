@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
+import PageLayout from '@/components/layout/page-layout';
 
 export const metadata: Metadata = {
   title: 'BHK SEO Tools - AI-Powered SEO Analysis',
@@ -26,9 +25,9 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased flex flex-col min-h-screen')}>
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <PageLayout>
+          {children}
+        </PageLayout>
         <Toaster />
       </body>
     </html>
