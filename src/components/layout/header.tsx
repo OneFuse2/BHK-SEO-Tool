@@ -2,14 +2,26 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search } from 'lucide-react';
+import { Menu, ChevronDown } from 'lucide-react';
 import Logo from '@/components/logo';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
-const navLinks = [
+const mainNavLinks = [
+  { href: '/features', label: 'Features' },
+  { href: '/pricing', label: 'Pricing' },
   { href: '/blog', label: 'Blog' },
+];
+
+const toolsLinks = [
   { href: '/dashboard/compare', label: 'Compare' },
   { href: '/dashboard/favicon-checker', label: 'Favicon Checker' },
   { href: '/dashboard/dns-checker', label: 'DNS Checker' },
@@ -21,6 +33,7 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link
@@ -29,6 +42,7 @@ export default function Header() {
         'text-sm font-medium transition-colors hover:text-primary',
         pathname === href ? 'text-primary' : 'text-muted-foreground'
       )}
+      onClick={() => isMobileMenuOpen && setIsMobileMenuOpen(false)}
     >
       {label}
     </Link>
@@ -42,47 +56,59 @@ export default function Header() {
             <Logo />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
+            {mainNavLinks.map((link) => (
               <NavLink key={link.href} {...link} />
             ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus:outline-none">
+                Tools <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {toolsLinks.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link href={link.href}>{link.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild>
+        <div className="hidden md:flex items-center gap-2">
+          <Button variant="ghost" asChild>
             <Link href="/login">Log In</Link>
           </Button>
           <Button asChild>
-            <Link href="/dashboard">Get Started</Link>
+            <Link href="/signup">Get Started</Link>
           </Button>
         </div>
 
         <div className="md:hidden">
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="right" className="w-[300px]">
               <nav className="flex flex-col gap-6 pt-8">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-lg font-medium"
-                  >
-                    {link.label}
-                  </Link>
+                {mainNavLinks.map((link) => (
+                  <NavLink key={link.href} {...link} />
                 ))}
+                <div className="flex flex-col gap-4">
+                    <h3 className="font-semibold">Tools</h3>
+                    {toolsLinks.map(link => (
+                        <NavLink key={link.href} {...link} />
+                    ))}
+                </div>
                 <div className="mt-6 flex flex-col gap-4">
-                    <Button variant="ghost" asChild>
-                        <Link href="/login">Log In</Link>
-                    </Button>
-                    <Button asChild>
-                        <Link href="/dashboard">Get Started</Link>
-                    </Button>
+                  <Button variant="ghost" asChild>
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>Get Started</Link>
+                  </Button>
                 </div>
               </nav>
             </SheetContent>
