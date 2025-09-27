@@ -59,21 +59,36 @@ const LoadingSkeleton = () => (
 
 
 export default function WebsiteInformationPage() {
-  const [domain, setDomain] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [results, setResults] = useState<WebsiteInfoOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [submittedDomain, setSubmittedDomain] = useState('');
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!domain) {
-        toast({ title: "Domain is required", description: "Please enter a domain to get information.", variant: "destructive" });
+    if (!inputValue) {
+        toast({ title: "Domain is required", description: "Please enter a domain or URL to get information.", variant: "destructive" });
         return;
     };
+    
+    let domainToSubmit = inputValue;
+    try {
+        // Prepend http if no protocol is present to allow URL parsing
+        const urlInput = inputValue.startsWith('http') ? inputValue : `http://${inputValue}`;
+        const url = new URL(urlInput);
+        domainToSubmit = url.hostname;
+    } catch (error) {
+        // If URL parsing fails, assume it's a plain domain.
+        console.warn("Could not parse as URL, assuming plain domain:", inputValue);
+    }
+    
+    setSubmittedDomain(domainToSubmit);
     setIsLoading(true);
     setResults(null);
+
     try {
-        const res = await getWebsiteInformation({ domain });
+        const res = await getWebsiteInformation({ domain: domainToSubmit });
         setResults(res);
     } catch (err) {
         console.error(err);
@@ -111,13 +126,13 @@ export default function WebsiteInformationPage() {
             <Card>
                 <CardContent className="p-6">
                      <h1 className="text-2xl font-bold text-foreground mb-4">
-                        {results ? `${domain} Website Information` : 'Website Information'}
+                        {results ? `${submittedDomain} Website Information` : 'Website Information'}
                     </h1>
                     <form onSubmit={handleSubmit} className="flex gap-2">
                         <Input
-                        value={domain}
-                        onChange={(e) => setDomain(e.target.value.trim())}
-                        placeholder="example.com"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value.trim())}
+                        placeholder="example.com or https://example.com"
                         className="h-11 text-base flex-grow"
                         disabled={isLoading}
                         />
@@ -137,7 +152,7 @@ export default function WebsiteInformationPage() {
                             <CardContent className="p-6 text-sm text-foreground space-y-2">
                                 <p>
                                     <Globe className="inline-block h-4 w-4 mr-2" />
-                                    {domain} is <strong>{results.summary.age}</strong>. It is a {results.summary.traffic} site with a global rank of <strong>{results.summary.globalRank}</strong>. It has a medium PageRank of <strong>{results.summary.pageRank}</strong>, which means that the website has {results.summary.backlinks}.
+                                    {submittedDomain} is <strong>{results.summary.age}</strong>. It is a {results.summary.traffic} site with a global rank of <strong>{results.summary.globalRank}</strong>. It has a medium PageRank of <strong>{results.summary.pageRank}</strong>, which means that the website has {results.summary.backlinks}.
                                 </p>
                                 <p>The server is hosted by <strong>{results.summary.hosting}</strong> and located in the <strong>{results.summary.serverLocation}</strong>.</p>
                                 <p>The domain is registered with <strong>{results.summary.registrar}</strong> and will expire <strong>{results.summary.expiry}</strong>.</p>
