@@ -28,7 +28,7 @@ const WebsiteInfoOutputSchema = z.object({
     serverLocation: z.string().describe('The country where the server is located.'),
     registrar: z.string().describe('The domain registrar name.'),
     expiry: z.string().describe('Time until domain expiration (e.g., "in 1 year and 9 months").'),
-  }),
+  }).passthrough(),
   overview: z.object({
     country: z.string().describe('The country of the website owner or organization.'),
     countryCode: z.string().length(2).describe('The two-letter country code (e.g., "US", "IN").'),
@@ -44,7 +44,7 @@ const WebsiteInfoOutputSchema = z.object({
     serverLocation: z.string().describe('The server location (Country -> Geolocation).'),
     safety: z.string().describe('A safety assessment (e.g., "Safe").'),
     safetyScore: z.string().describe('A safety score (e.g., "7/7").'),
-  }),
+  }).passthrough(),
 });
 export type WebsiteInfoOutput = z.infer<typeof WebsiteInfoOutputSchema>;
 
