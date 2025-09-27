@@ -32,6 +32,7 @@ const toolsLinks = [
   { href: '/dashboard/ip-checker', label: 'IP Checker' },
   { href: '/dashboard/meta-generator', label: 'Meta Tag Generator' },
   { href: '/dashboard/backlink-creator', label: 'Content Generator' },
+  { href: '/dashboard/website-information', label: 'Website Information' },
 ];
 
 export default function Header() {
